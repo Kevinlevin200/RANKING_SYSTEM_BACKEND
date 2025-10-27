@@ -1,0 +1,21 @@
+{
+  "name": "foddie_rank",
+  "version": "1.0.0",
+  "description": "este es un sistema fullstack que permite el rankeo de restuarantes y platos",
+  "main": "main.js",
+  "scripts": {
+    "start": "src/server.js",
+    "dev":"src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kevinlevin200/RANKING_SYSTEM_BACKEND.git"
+  },
+  "keywords": ["restuarantes, comida, rankig top"],
+  "author": "Juan Camilo Rojas Arenas, Kevin Santiago Rivero Rueda",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kevinlevin200/RANKING_SYSTEM_BACKEND/issues"
+  },
+  "homepage": "https://github.com/Kevinlevin200/RANKING_SYSTEM_BACKEND#readme"
+}
