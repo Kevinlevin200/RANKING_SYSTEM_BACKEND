@@ -5,17 +5,32 @@
   "main": "main.js",
   "scripts": {
     "start": "src/server.js",
-    "dev":"src/server.js"
+    "dev": "src/server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Kevinlevin200/RANKING_SYSTEM_BACKEND.git"
   },
-  "keywords": ["restuarantes, comida, rankig top"],
+  "keywords": [
+    "restuarantes, comida, rankig top"
+  ],
   "author": "Juan Camilo Rojas Arenas, Kevin Santiago Rivero Rueda",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Kevinlevin200/RANKING_SYSTEM_BACKEND/issues"
   },
-  "homepage": "https://github.com/Kevinlevin200/RANKING_SYSTEM_BACKEND#readme"
+  "homepage": "https://github.com/Kevinlevin200/RANKING_SYSTEM_BACKEND#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.20.0",
+    "passport-jwt": "^4.0.1",
+    "semver": "^7.7.3",
+    "swagger-ui-express": "^5.0.1"
+  }
 }
