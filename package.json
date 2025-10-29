@@ -4,8 +4,8 @@
   "description": "este es un sistema fullstack que permite el rankeo de restuarantes y platos",
   "main": "main.js",
   "scripts": {
-    "start": "src/server.js",
-    "dev": "src/server.js"
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
   },
   "repository": {
     "type": "git",
