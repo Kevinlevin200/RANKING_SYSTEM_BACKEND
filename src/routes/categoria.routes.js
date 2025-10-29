@@ -8,10 +8,9 @@ import {
 import {
   crearCategoriaDTO,
   actualizarCategoriaDTO,
-} from "../dtos/categoria.dto.js";
+} from "../dtos/categorias.dto.js";
 import { validationDTO } from "../middlewares/validation_dto.js";
 import { verificarSesion } from "../middlewares/verificar_sesion.js";
-import { soloAdmin } from "../middlewares/solo_admin.js";
 
 const router = Router();
 
@@ -20,7 +19,6 @@ router.get("/", listarCategorias);
 router.post(
   "/registrar",
   verificarSesion,
-  soloAdmin,
   crearCategoriaDTO,
   validationDTO,
   registrarCategoria
@@ -29,12 +27,11 @@ router.post(
 router.patch(
   "/:id",
   verificarSesion,
-  soloAdmin,
   actualizarCategoriaDTO,
   validationDTO,
   modificarCategoria
 );
 
-router.delete("/:id", verificarSesion, soloAdmin, borrarCategoria);
+router.delete("/:id", verificarSesion, borrarCategoria);
 
 export default router;

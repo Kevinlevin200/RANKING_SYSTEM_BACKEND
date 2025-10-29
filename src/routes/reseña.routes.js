@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  registrarReseña,
+  crearReseña,
   modificarReseña,
   borrarReseña,
 } from "../controllers/reseña.controller.js";
@@ -18,7 +18,7 @@ router.post(
   verificarSesion,
   registrarReseñaDTO,
   validationDTO,
-  registrarReseña
+  crearReseña
 );
 
 router.patch(

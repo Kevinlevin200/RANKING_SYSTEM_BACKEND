@@ -2,10 +2,10 @@ import {
   registrarReseña,
   actualizarReseña,
   eliminarReseña,
-} from "../services/reseñas.service.js";
+} from "../services/reseña.service.js";
 
 // 📝 Registrar reseña
-export async function registrarReseña(req, res) {
+export async function crearReseña(req, res) {
   try {
     const resultado = await registrarReseña(req.body);
     res.status(201).json(resultado);

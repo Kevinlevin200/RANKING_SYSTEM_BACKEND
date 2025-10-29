@@ -1,15 +1,15 @@
 import { Router } from "express";
 import {
-  registrarPlato,
+  crearPlato,
   listarPlatosPorRestaurante,
   verPlatoPorId,
   modificarPlato,
   borrarPlato,
-} from "../controllers/plato.controller.js";
+} from "../controllers/platos.controller.js";
 import {
   registrarPlatoDTO,
   actualizarPlatoDTO,
-} from "../dtos/plato.dto.js";
+} from "../dtos/platos.dto.js";
 import { validationDTO } from "../middlewares/validation_dto.js";
 import { verificarSesion } from "../middlewares/verificar_sesion.js";
 
@@ -24,7 +24,7 @@ router.post(
   verificarSesion,
   registrarPlatoDTO,
   validationDTO,
-  registrarPlato
+  crearPlato
 );
 
 router.patch(

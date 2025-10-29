@@ -6,7 +6,7 @@ import {
   eliminarPlato,
 } from "../services/platos.service.js";
 
-export async function registrarPlato(req, res) {
+export async function crearPlato(req, res) {
   try {
     const resultado = await registrarPlato(req.body);
     res.status(201).json(resultado);

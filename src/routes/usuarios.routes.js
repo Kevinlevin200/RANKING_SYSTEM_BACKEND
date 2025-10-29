@@ -11,7 +11,7 @@ import {
   registrarUsuarioDTO,
   loginUsuarioDTO,
   cambiarContraseñaDTO
-} from "../dto/usuarios.dto.js";
+} from "../dtos/usuario.dto.js";
 import { validationDTO } from "../middlewares/validation_dto.js";
 import { verificarSesion } from "../middlewares/verificar_sesion.js";
 

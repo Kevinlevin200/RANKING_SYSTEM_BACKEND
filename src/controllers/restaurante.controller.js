@@ -5,7 +5,7 @@ import {
   obtenerRestaurantePorId,
   actualizarRestaurante,
   eliminarRestaurante,
-} from "../services/restaurantes.service.js";
+} from "../services/restaurante.service.js";
 
 
 export async function registrarRestaurante(req, res) {
