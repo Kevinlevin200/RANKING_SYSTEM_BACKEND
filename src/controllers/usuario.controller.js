@@ -3,7 +3,7 @@ import {
   registrarUsuario,
   validarCredenciales,
   cambiarContraseña,
-} from "../services/usuarios.services.js";
+} from "../services/usuarios.service.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
