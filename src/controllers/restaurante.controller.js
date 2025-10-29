@@ -7,6 +7,7 @@ import {
   eliminarRestaurante,
 } from "../services/restaurantes.service.js";
 
+
 export async function registrarRestaurante(req, res) {
   try {
     const resultado = await crearRestaurante(req.body);
