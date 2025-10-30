@@ -1,4 +1,4 @@
-import { ConnectDB, GetDB } from "./config/dbnp";
+import { ConnectDB, GetDB } from "./config/db.js";
 import bcrypt from "bcrypt";
 
 async function seed() {
