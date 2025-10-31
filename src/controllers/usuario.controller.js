@@ -13,9 +13,43 @@ dotenv.config();
 export async function registrarUnUsuario(req, res) {
   try {
     const resultado = await registrarUsuario(req.body);
-    res.status(201).json(resultado);
+    
+    console.log("📦 Resultado del servicio registrarUsuario:", resultado);
+    
+    // ⭐ VERIFICAR QUE RESULTADO TENGA LA ESTRUCTURA CORRECTA
+    // El servicio puede devolver: { usuario: {...} } o directamente el usuario
+    const usuarioRegistrado = resultado.usuario || resultado;
+    
+    if (!usuarioRegistrado || !usuarioRegistrado._id) {
+      throw new Error("Error: El servicio no devolvió un usuario válido");
+    }
+    
+    // ⭐ GENERAR TOKEN JWT DESPUÉS DEL REGISTRO
+    const payload = {
+      id: usuarioRegistrado._id,
+      email: usuarioRegistrado.email,
+      tipo: usuarioRegistrado.tipo,
+      usuario: usuarioRegistrado.usuario,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "4h",
+    });
+
+    // ⭐ DEVOLVER TOKEN Y DATOS DEL USUARIO
+    res.status(201).json({
+      mensaje: resultado.mensaje || "✅ Usuario registrado exitosamente",
+      token,
+      usuario: {
+        _id: usuarioRegistrado._id,
+        email: usuarioRegistrado.email,
+        usuario: usuarioRegistrado.usuario,
+        tipo: usuarioRegistrado.tipo,
+      },
+    });
   } catch (error) {
     console.error("❌ Error en registrarUnUsuario:", error);
+    console.error("❌ Stack completo:", error.stack);
     res.status(400).json({ error: error.message });
   }
 }
@@ -45,6 +79,7 @@ export async function iniciarSesion(req, res) {
       mensaje: "✅ Sesión iniciada",
       token,
       usuario: {
+        _id: usuario._id,
         email: usuario.email,
         usuario: usuario.usuario,
         tipo: usuario.tipo,
@@ -94,6 +129,7 @@ export async function verificarSesionActual(req, res) {
 
     res.status(200).json({
       usuario: {
+        _id: decoded.id,
         email: decoded.email,
         usuario: decoded.usuario,
         tipo: decoded.tipo,
