@@ -25,8 +25,20 @@ export async function registrarUsuario(datos) {
     creadoEn: new Date(),
   };
 
-  await GetDB().collection(COLECCION_USUARIOS).insertOne(nuevoUsuario);
-  return { message: "Registro exitoso." };
+  // ⭐ INSERTAR Y OBTENER EL RESULTADO CON _id
+  const resultado = await GetDB().collection(COLECCION_USUARIOS).insertOne(nuevoUsuario);
+  
+  // ⭐ DEVOLVER EL USUARIO CON SU _id (sin la contraseña)
+  return {
+    message: "Registro exitoso.",
+    usuario: {
+      _id: resultado.insertedId,
+      email: nuevoUsuario.email,
+      usuario: nuevoUsuario.usuario,
+      tipo: nuevoUsuario.tipo,
+      creadoEn: nuevoUsuario.creadoEn,
+    }
+  };
 }
 
 // Validar credenciales para login
