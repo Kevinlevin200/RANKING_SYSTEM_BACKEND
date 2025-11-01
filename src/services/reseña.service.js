@@ -2,6 +2,7 @@ import { GetDB } from "../config/db.js";
 
 const COLECCION_RESEÑAS = "reseñas";
 const COLECCION_RESTAURANTES = "restaurantes";
+const COLECCION_USUARIOS = "usuarios"; // 👈 NUEVO
 
 export async function registrarReseña(datos) {
   const { comentario, calificacion, restauranteId, usuarioId } = datos;
@@ -69,6 +70,44 @@ export async function eliminarReseña(id, usuarioId) {
   await recalcularRating(reseña.restauranteId);
 
   return { message: "Reseña eliminada correctamente." };
+}
+
+// 👤 NUEVA FUNCIÓN: Obtener reseñas con datos de restaurante y usuario
+export async function obtenerReseñasPorUsuario(usuarioId) {
+  const { ObjectId } = await import("mongodb");
+
+  // Obtener reseñas del usuario
+  const reseñas = await GetDB()
+    .collection(COLECCION_RESEÑAS)
+    .find({ usuarioId })
+    .sort({ creadaEn: -1 })
+    .toArray();
+
+  if (!reseñas || reseñas.length === 0) {
+    return [];
+  }
+
+  // Obtener IDs únicos de restaurantes
+  const restauranteIds = [...new Set(reseñas.map(r => r.restauranteId))];
+
+  // Buscar restaurantes
+  const restaurantes = await GetDB()
+    .collection(COLECCION_RESTAURANTES)
+    .find({ _id: { $in: restauranteIds.map(id => new ObjectId(id)) } })
+    .toArray();
+
+  // Mapear restaurantes por ID
+  const restaurantesMap = {};
+  restaurantes.forEach(rest => {
+    restaurantesMap[rest._id.toString()] = rest;
+  });
+
+  // Combinar reseñas con datos de restaurante
+  return reseñas.map(reseña => ({
+    ...reseña,
+    restauranteId: restaurantesMap[reseña.restauranteId] || null,
+    createdAt: reseña.creadaEn,
+  }));
 }
 
 async function recalcularRating(restauranteId) {

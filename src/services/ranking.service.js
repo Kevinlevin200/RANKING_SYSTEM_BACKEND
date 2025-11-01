@@ -36,7 +36,7 @@ export async function filtrarRankingPorCategoria(categoria) {
   return todos.filter(r => r.restaurante.categoria === categoria);
 }
 
-// 🔍 Vista detallada
+// 🔍 Vista detallada CON DATOS DE USUARIOS
 export async function obtenerVistaDetallada(id) {
   const { ObjectId } = await import("mongodb");
 
@@ -51,14 +51,40 @@ export async function obtenerVistaDetallada(id) {
     .find({ restauranteId: id })
     .toArray();
 
+  // 👇 CAMBIO IMPORTANTE: Traer reseñas con datos de usuario
   const reseñas = await GetDB()
     .collection("reseñas")
     .find({ restauranteId: id })
     .toArray();
 
+  // Obtener IDs únicos de usuarios
+  const usuarioIds = [...new Set(reseñas.map(r => r.usuarioId).filter(Boolean))];
+
+  // Buscar usuarios
+  const usuarios = await GetDB()
+    .collection("usuarios")
+    .find({ _id: { $in: usuarioIds.map(id => new ObjectId(id)) } })
+    .project({ usuario: 1, nombre: 1, email: 1 }) // Solo traer campos necesarios
+    .toArray();
+
+  // Mapear usuarios por ID
+  const usuariosMap = {};
+  usuarios.forEach(user => {
+    usuariosMap[user._id.toString()] = user;
+  });
+
+  // Combinar reseñas con datos de usuario
+  const reseñasConUsuarios = reseñas.map(reseña => ({
+    ...reseña,
+    usuarioId: usuariosMap[reseña.usuarioId] || { 
+      usuario: "Usuario Anónimo",
+      nombre: "Anónimo"
+    },
+  }));
+
   return {
     restaurante,
     platos,
-    reseñas,
+    reseñas: reseñasConUsuarios,
   };
 }
