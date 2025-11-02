@@ -23,9 +23,17 @@ export const registrarPlatoDTO = [
     .withMessage("La categoría debe ser válida."),
 
   body("imagen")
-    .optional()
-    .isString()
-    .withMessage("La imagen debe ser una cadena (URL o base64)."),
+    .custom((value) => {
+      // Permitir null, undefined o cadena vacía
+      if (value === null || value === undefined || value === '') {
+        return true;
+      }
+      // Si tiene valor, debe ser string
+      if (typeof value === 'string') {
+        return true;
+      }
+      throw new Error('La imagen debe ser una cadena (URL) o estar vacía.');
+    }),
 
   body("restauranteId")
     .isString()
@@ -55,9 +63,17 @@ export const actualizarPlatoDTO = [
     .withMessage("La categoría debe ser válida."),
 
   body("imagen")
-    .optional()
-    .isString()
-    .withMessage("La imagen debe ser una cadena (URL o base64)."),
+    .custom((value) => {
+      // Permitir null, undefined o cadena vacía
+      if (value === null || value === undefined || value === '') {
+        return true;
+      }
+      // Si tiene valor, debe ser string
+      if (typeof value === 'string') {
+        return true;
+      }
+      throw new Error('La imagen debe ser una cadena (URL) o estar vacía.');
+    }),
 
   body("restauranteId")
     .optional()
