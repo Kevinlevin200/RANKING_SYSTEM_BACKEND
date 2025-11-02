@@ -12,11 +12,12 @@ import {
   actualizarRestauranteDTO,
 } from "../dtos/restaurante.dto.js";
 import { validationDTO } from "../middlewares/validation_dto.js";
-import { verificarSesion } from "../middlewares/verificar_sesion.js";
+import { verificarSesion, verificarSesionOpcional } from "../middlewares/verificar_sesion.js";
 
 const router = Router();
 
-router.get("/", listarRestaurantes);
+// ✅ Esta ruta usa verificarSesionOpcional para identificar si es admin
+router.get("/", verificarSesionOpcional, listarRestaurantes);
 
 router.get("/:id", verRestaurantePorId);
 

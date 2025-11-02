@@ -26,10 +26,13 @@ export async function crearRestaurante(datos) {
   return { message: "Restaurante registrado correctamente." };
 }
 
-export async function obtenerRestaurantes() {
+// ✅ MODIFICADO: Ahora acepta un parámetro opcional para filtrar
+export async function obtenerRestaurantes(filtros = {}) {
+  // Si no se especifican filtros, devuelve TODOS los restaurantes
+  // Esto permite que el admin vea todos, pero el público solo vea los aprobados
   const restaurantes = await GetDB()
     .collection(COLECCION_RESTAURANTES)
-    .find({ aprobado: true })
+    .find(filtros)
     .toArray();
 
   return restaurantes;
@@ -39,7 +42,7 @@ export async function obtenerRestaurantePorId(id) {
   const { ObjectId } = await import("mongodb");
   const restaurante = await GetDB()
     .collection(COLECCION_RESTAURANTES)
-    .findOne({ _id: new ObjectId(id), aprobado: true });
+    .findOne({ _id: new ObjectId(id) });
 
   if (!restaurante) throw new Error("Restaurante no encontrado.");
   return restaurante;

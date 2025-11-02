@@ -6,7 +6,7 @@ dotenv.config();
 
 export function verificarSesion(req, res, next) {
   try {
-    console.log("🔐 [verificarSesion] Verificando token...");
+    console.log("🔍 [verificarSesion] Verificando token...");
 
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -24,8 +24,12 @@ export function verificarSesion(req, res, next) {
       return res.status(403).json({ error: "Token inválido o sin permisos." });
     }
 
-    // ✅ PERMITIR ACCESO A TODOS LOS TIPOS DE USUARIOS AUTENTICADOS
-    // (usuario, empleado, admin)
+    // ✅ PERMITIR ACCESO A USUARIOS Y ADMINS
+    if (decoded.tipo !== "usuario" && decoded.tipo !== "admin") {
+      console.log("❌ Tipo de usuario no válido:", decoded.tipo);
+      return res.status(403).json({ error: "Tipo de usuario no válido." });
+    }
+
     req.usuario = decoded; // Guardar info del usuario en la request
     console.log("✅ Acceso permitido para:", decoded.tipo);
     next();
@@ -36,6 +40,43 @@ export function verificarSesion(req, res, next) {
   }
 }
 
+// ✅ NUEVO: Middleware opcional que NO rechaza peticiones sin token
+export function verificarSesionOpcional(req, res, next) {
+  try {
+    console.log("🔍 [verificarSesionOpcional] Iniciando verificación...");
+    console.log("📋 Headers recibidos:", req.headers.authorization ? "Token presente" : "Sin token");
+
+    const authHeader = req.headers.authorization;
+    
+    // Si no hay token, continuar sin usuario
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log("ℹ️ No hay token válido, continuando como público");
+      req.usuario = null;
+      return next();
+    }
+
+    const token = authHeader.split(" ")[1];
+    console.log("🔑 Token extraído, verificando...");
+    
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.usuario = decoded;
+      console.log("✅ Token válido - Usuario:", decoded.email || decoded.usuario);
+      console.log("✅ Tipo de usuario:", decoded.tipo);
+      console.log("✅ req.usuario asignado:", req.usuario ? "SÍ" : "NO");
+    } catch (error) {
+      console.log("⚠️ Token inválido:", error.message);
+      req.usuario = null;
+    }
+    
+    next();
+
+  } catch (error) {
+    console.error("❌ Error en verificarSesionOpcional:", error.message);
+    req.usuario = null;
+    next();
+  }
+}
 
 export function verificarAdmin(req, res, next) {
   try {

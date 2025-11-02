@@ -18,9 +18,25 @@ export async function registrarRestaurante(req, res) {
   }
 }
 
+// ✅ MODIFICADO: Ahora los admins ven todos los restaurantes
 export async function listarRestaurantes(req, res) {
   try {
-    const restaurantes = await obtenerRestaurantes();
+    console.log("🍽️ [listarRestaurantes] Usuario en request:", req.usuario ? req.usuario.tipo : "ninguno");
+    
+    // Si el usuario está autenticado y es admin, devuelve TODOS
+    // Si no, solo devuelve los aprobados
+    let filtros = {};
+    
+    // Si NO hay usuario O si no es admin, filtrar por aprobados
+    if (!req.usuario || req.usuario.tipo !== "admin") {
+      console.log("🔒 Aplicando filtro aprobado: true (usuario público o no admin)");
+      filtros = { aprobado: true };
+    } else {
+      console.log("🔓 Sin filtros - Admin puede ver TODOS los restaurantes");
+    }
+    
+    const restaurantes = await obtenerRestaurantes(filtros);
+    console.log("📊 Restaurantes devueltos:", restaurantes.length);
     res.status(200).json(restaurantes);
   } catch (error) {
     console.error("❌ Error en listarRestaurantes:", error.message);
