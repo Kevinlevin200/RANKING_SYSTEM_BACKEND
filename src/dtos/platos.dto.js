@@ -22,14 +22,6 @@ export const registrarPlatoDTO = [
     .isIn(["Comida rápida", "Gourmet", "Vegetariano", "Internacional", "Tradicional"])
     .withMessage("La categoría debe ser válida."),
 
-  body("ubicacion")
-    .isString()
-    .trim()
-    .notEmpty()
-    .withMessage("La ubicación es obligatoria.")
-    .isLength({ min: 5, max: 100 })
-    .withMessage("La ubicación debe tener entre 5 y 100 caracteres."),
-
   body("imagen")
     .optional()
     .isString()
@@ -61,13 +53,6 @@ export const actualizarPlatoDTO = [
     .optional()
     .isIn(["Comida rápida", "Gourmet", "Vegetariano", "Internacional", "Tradicional"])
     .withMessage("La categoría debe ser válida."),
-
-  body("ubicacion")
-    .optional()
-    .isString()
-    .trim()
-    .isLength({ min: 5, max: 100 })
-    .withMessage("La ubicación debe tener entre 5 y 100 caracteres."),
 
   body("imagen")
     .optional()

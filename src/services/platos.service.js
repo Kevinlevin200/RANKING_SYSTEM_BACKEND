@@ -3,9 +3,9 @@ import { GetDB } from "../config/db.js";
 const COLECCION_PLATOS = "platos";
 
 export async function registrarPlato(datos) {
-  const { nombre, descripcion, categoria, ubicacion, imagen, restauranteId } = datos;
+  const { nombre, descripcion, categoria, imagen, restauranteId } = datos;
 
-  if (!nombre || !descripcion || !categoria || !ubicacion || !restauranteId) {
+  if (!nombre || !descripcion || !categoria || !restauranteId) {
     throw new Error("Faltan campos obligatorios.");
   }
 
@@ -19,7 +19,6 @@ export async function registrarPlato(datos) {
     nombre,
     descripcion,
     categoria,
-    ubicacion,
     imagen: imagen || null,
     restauranteId,
     creadoEn: new Date(),
