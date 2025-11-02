@@ -4,6 +4,7 @@ import {
   obtenerPlatoPorId,
   actualizarPlato,
   eliminarPlato,
+  obtenerTodosLosPlatosService
 } from "../services/platos.service.js";
 
 export async function crearPlato(req, res) {
@@ -59,3 +60,29 @@ export async function borrarPlato(req, res) {
     res.status(404).json({ error: error.message });
   }
 }
+
+export const listarTodosLosPlatos = async (req, res) => {
+  try {
+    console.log("🔍 Controller: Solicitando todos los platos...");
+    
+    const resultado = await obtenerTodosLosPlatosService();
+
+    if (!resultado.success) {
+      return res.status(500).json({ 
+        error: "Error al obtener los platos",
+        detalles: resultado.error 
+      });
+    }
+
+    console.log(`✅ Controller: Enviando ${resultado.total} platos al cliente`);
+
+    return res.status(200).json(resultado.data);
+    
+  } catch (error) {
+    console.error("❌ Controller Error al listar todos los platos:", error);
+    return res.status(500).json({ 
+      error: "Error al obtener los platos",
+      detalles: error.message 
+    });
+  }
+};

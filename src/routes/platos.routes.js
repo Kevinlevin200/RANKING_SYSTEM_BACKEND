@@ -5,6 +5,7 @@ import {
   verPlatoPorId,
   modificarPlato,
   borrarPlato,
+  listarTodosLosPlatos
 } from "../controllers/platos.controller.js";
 import {
   registrarPlatoDTO,
@@ -14,6 +15,8 @@ import { validationDTO } from "../middlewares/validation_dto.js";
 import { verificarSesion } from "../middlewares/verificar_sesion.js";
 
 const router = Router();
+
+router.get("/", listarTodosLosPlatos);
 
 router.get("/restaurante/:restauranteId", listarPlatosPorRestaurante);
 

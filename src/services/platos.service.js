@@ -78,3 +78,25 @@ export async function eliminarPlato(id) {
   if (resultado.deletedCount === 0) throw new Error("Plato no encontrado.");
   return { message: "Plato eliminado correctamente." };
 }
+
+export const obtenerTodosLosPlatosService = async () => {
+  try {
+    const db = GetDB();
+    
+    const platos = await db
+      .collection("platos")
+      .find({})
+      .toArray();
+
+    console.log(`✅ Service: ${platos.length} platos encontrados en BD`);
+
+    return {
+      success: true,
+      data: platos,
+      total: platos.length
+    };
+  } catch (error) {
+    console.error("❌ Service Error al listar todos los platos:", error);
+    throw new Error(`Error en servicio: ${error.message}`);
+  }
+};
