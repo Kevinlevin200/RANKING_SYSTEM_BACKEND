@@ -29,8 +29,8 @@ const limiter = rateLimit({
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      "https://tuusuario.github.io",
-      "https://tubackend.onrender.com",
+      "https://kevinlevin200.github.io/RANKING_SYSTEM_FRONTEND/",
+      "https://ranking-system-backend.onrender.com",
       "http://localhost:5500",
       "http://127.0.0.1:5500",  // ⭐ CRÍTICO: Agregar 127.0.0.1
       "http://localhost:4000",
