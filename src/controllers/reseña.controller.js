@@ -2,7 +2,9 @@ import {
   registrarReseña,
   actualizarReseña,
   eliminarReseña,
-  obtenerReseñasPorUsuario, // 👈 NUEVO
+  obtenerReseñasPorUsuario,
+  darLikeReseña,      
+  darDislikeReseña 
 } from "../services/reseña.service.js";
 
 // 📝 Registrar reseña
@@ -61,5 +63,41 @@ export async function obtenerReseñasUsuario(req, res) {
   } catch (error) {
     console.error("❌ Error en obtenerReseñasUsuario:", error.message);
     res.status(500).json({ error: error.message });
+  }
+}
+
+// 👍 Like a reseña
+export async function darLike(req, res) {
+  try {
+    const { id } = req.params;
+    const { usuarioId } = req.body;
+
+    if (!usuarioId) {
+      return res.status(400).json({ error: "El ID del usuario es obligatorio." });
+    }
+
+    const resultado = await darLikeReseña(id, usuarioId);
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("❌ Error en darLike:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+}
+
+// 👎 Dislike a reseña
+export async function darDislike(req, res) {
+  try {
+    const { id } = req.params;
+    const { usuarioId } = req.body;
+
+    if (!usuarioId) {
+      return res.status(400).json({ error: "El ID del usuario es obligatorio." });
+    }
+
+    const resultado = await darDislikeReseña(id, usuarioId);
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("❌ Error en darDislike:", error.message);
+    res.status(400).json({ error: error.message });
   }
 }

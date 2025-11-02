@@ -132,3 +132,91 @@ async function recalcularRating(restauranteId) {
     { $set: { rating: promedio } }
   );
 }
+
+// 👍 DAR LIKE A UNA RESEÑA
+export async function darLikeReseña(reseñaId, usuarioId) {
+  const { ObjectId } = await import("mongodb");
+
+  const reseña = await GetDB()
+    .collection(COLECCION_RESEÑAS)
+    .findOne({ _id: new ObjectId(reseñaId) });
+
+  if (!reseña) throw new Error("Reseña no encontrada.");
+
+  // Verificar si el usuario ya dio like
+  const yaLike = reseña.likes?.includes(usuarioId);
+  
+  if (yaLike) {
+    // Si ya dio like, quitarlo (toggle)
+    await GetDB().collection(COLECCION_RESEÑAS).updateOne(
+      { _id: new ObjectId(reseñaId) },
+      { $pull: { likes: usuarioId } }
+    );
+    return { message: "Like eliminado", likes: (reseña.likes?.length || 1) - 1 };
+  }
+
+  // Si tiene dislike, quitarlo primero
+  const yaDislike = reseña.dislikes?.includes(usuarioId);
+  if (yaDislike) {
+    await GetDB().collection(COLECCION_RESEÑAS).updateOne(
+      { _id: new ObjectId(reseñaId) },
+      { $pull: { dislikes: usuarioId } }
+    );
+  }
+
+  // Agregar like
+  await GetDB().collection(COLECCION_RESEÑAS).updateOne(
+    { _id: new ObjectId(reseñaId) },
+    { $addToSet: { likes: usuarioId } }
+  );
+
+  return { 
+    message: "Like agregado", 
+    likes: (reseña.likes?.length || 0) + 1,
+    dislikes: yaDislike ? (reseña.dislikes?.length || 1) - 1 : (reseña.dislikes?.length || 0)
+  };
+}
+
+// 👎 DAR DISLIKE A UNA RESEÑA
+export async function darDislikeReseña(reseñaId, usuarioId) {
+  const { ObjectId } = await import("mongodb");
+
+  const reseña = await GetDB()
+    .collection(COLECCION_RESEÑAS)
+    .findOne({ _id: new ObjectId(reseñaId) });
+
+  if (!reseña) throw new Error("Reseña no encontrada.");
+
+  // Verificar si el usuario ya dio dislike
+  const yaDislike = reseña.dislikes?.includes(usuarioId);
+  
+  if (yaDislike) {
+    // Si ya dio dislike, quitarlo (toggle)
+    await GetDB().collection(COLECCION_RESEÑAS).updateOne(
+      { _id: new ObjectId(reseñaId) },
+      { $pull: { dislikes: usuarioId } }
+    );
+    return { message: "Dislike eliminado", dislikes: (reseña.dislikes?.length || 1) - 1 };
+  }
+
+  // Si tiene like, quitarlo primero
+  const yaLike = reseña.likes?.includes(usuarioId);
+  if (yaLike) {
+    await GetDB().collection(COLECCION_RESEÑAS).updateOne(
+      { _id: new ObjectId(reseñaId) },
+      { $pull: { likes: usuarioId } }
+    );
+  }
+
+  // Agregar dislike
+  await GetDB().collection(COLECCION_RESEÑAS).updateOne(
+    { _id: new ObjectId(reseñaId) },
+    { $addToSet: { dislikes: usuarioId } }
+  );
+
+  return { 
+    message: "Dislike agregado", 
+    dislikes: (reseña.dislikes?.length || 0) + 1,
+    likes: yaLike ? (reseña.likes?.length || 1) - 1 : (reseña.likes?.length || 0)
+  };
+}

@@ -3,7 +3,9 @@ import {
   crearReseña,
   modificarReseña,
   borrarReseña,
-  obtenerReseñasUsuario, // 👈 NUEVO
+  obtenerReseñasUsuario,
+  darLike,        // 👈 NUEVO
+  darDislike,     // 👈 NUEVO
 } from "../controllers/reseña.controller.js";
 import {
   registrarReseñaDTO,
@@ -32,7 +34,10 @@ router.patch(
 
 router.delete("/:id", verificarSesion, borrarReseña);
 
-// 👇 NUEVA RUTA
 router.get("/usuario/:usuarioId", verificarSesion, obtenerReseñasUsuario);
+
+// 👍👎 NUEVAS RUTAS
+router.post("/:id/like", verificarSesion, darLike);
+router.post("/:id/dislike", verificarSesion, darDislike);
 
 export default router;

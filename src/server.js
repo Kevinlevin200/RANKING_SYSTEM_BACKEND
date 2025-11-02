@@ -5,7 +5,7 @@ import "dotenv/config.js";
 import { ConnectDB } from "./config/db.js";
 import routerUsuarios from "./routes/usuarios.routes.js";
 import routerRestaurantes from "./routes/restaurante.routes.js";
-import routerReseña from "./routes/reseña.routes.js";
+import routerResena from "./routes/reseña.routes.js";
 import routerPlatos from "./routes/platos.routes.js";
 import routerRanking from "./routes/ranking.routes.js";
 import routerCategoria from "./routes/categoria.routes.js";
@@ -69,7 +69,7 @@ app.use((req, res, next) => {
 app.use(`/api/${API_VERSION}/usuarios`, routerUsuarios);
 app.use(`/api/${API_VERSION}/restaurantes`, routerRestaurantes);
 app.use(`/api/${API_VERSION}/platos`, routerPlatos);
-app.use(`/api/${API_VERSION}/reseña`, routerReseña);
+app.use(`/api/${API_VERSION}/resena`, routerResena);
 app.use(`/api/${API_VERSION}/ranking`, routerRanking);
 app.use(`/api/${API_VERSION}/categoria`, routerCategoria);
 
