@@ -12,8 +12,8 @@ import routerCategoria from "./routes/categoria.routes.js";
 
 const app = express();
 
+// ✅ Render proporciona el PORT automáticamente
 const PORT = process.env.PORT || 4000;
-const HOST = process.env.HOST_NAME || "localhost";
 const API_VERSION = "v1";
 
 const windowMinutes = parseInt(process.env.RATE_LIMIT_WINDOW?.replace("m", "")) || 15;
@@ -25,19 +25,19 @@ const limiter = rateLimit({
   message: { error: "Demasiadas peticiones desde esta IP, intenta más tarde." },
 });
 
-// ✅ CONFIGURACIÓN CORS COMPLETA
+// ✅ CONFIGURACIÓN CORS PARA GITHUB PAGES Y LOCAL
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      "https://kevinlevin200.github.io/RANKING_SYSTEM_FRONTEND/",
+      "https://kevinlevin200.github.io", // ✅ GitHub Pages (sin barra final)
       "https://ranking-system-backend.onrender.com",
       "http://localhost:5500",
-      "http://127.0.0.1:5500",  // ⭐ CRÍTICO: Agregar 127.0.0.1
+      "http://127.0.0.1:5500",
       "http://localhost:4000",
       "http://127.0.0.1:4000"
     ];
 
-    // Permitir peticiones sin origin (Postman, Thunder Client, etc.)
+    // Permitir peticiones sin origin (Postman, Thunder Client, Render health checks)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -52,8 +52,7 @@ const corsOptions = {
   maxAge: 86400, // Cache preflight por 24 horas
 };
 
-// ⭐ APLICAR CORS ANTES DE RATE LIMIT
-// El middleware cors() ya maneja automáticamente las peticiones OPTIONS
+// ✅ APLICAR CORS ANTES DE RATE LIMIT
 app.use(cors(corsOptions));
 
 app.use(limiter);
@@ -73,7 +72,15 @@ app.use(`/api/${API_VERSION}/resena`, routerResena);
 app.use(`/api/${API_VERSION}/ranking`, routerRanking);
 app.use(`/api/${API_VERSION}/categoria`, routerCategoria);
 
-// ✅ HEALTH CHECK
+// ✅ HEALTH CHECK (importante para Render)
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "✅ Backend operativo",
+    version: API_VERSION,
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.get("/health", (req, res) => {
   res.status(200).json({
     message: "✅ Backend operativo con JWT y SemVer",
@@ -106,12 +113,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Error interno del servidor" });
 });
 
-// ✅ INICIAR SERVIDOR
+// ✅ INICIAR SERVIDOR (escuchar en 0.0.0.0 para Render)
 ConnectDB()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`🚀 Servidor corriendo en http://${HOST}:${PORT}/api/${API_VERSION}`);
-      console.log(`📡 CORS habilitado para localhost:5500 y 127.0.0.1:5500`);
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+      console.log(`🌍 API disponible en: /api/${API_VERSION}`);
+      console.log(`📡 CORS habilitado para GitHub Pages y localhost`);
     });
   })
   .catch((err) => {
