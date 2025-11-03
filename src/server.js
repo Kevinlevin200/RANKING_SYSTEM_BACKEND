@@ -4,6 +4,7 @@ import rateLimit from "express-rate-limit";
 import "dotenv/config.js";
 import { ConnectDB } from "./config/db.js";
 import routerUsuarios from "./routes/usuarios.routes.js";
+import swaggerDocs from "./docs/swagger.js";
 import routerRestaurantes from "./routes/restaurante.routes.js";
 import routerResena from "./routes/reseña.routes.js";
 import routerPlatos from "./routes/platos.routes.js";
@@ -77,6 +78,7 @@ app.use(`/api/${API_VERSION}/platos`, routerPlatos);
 app.use(`/api/${API_VERSION}/resena`, routerResena);
 app.use(`/api/${API_VERSION}/ranking`, routerRanking);
 app.use(`/api/${API_VERSION}/categoria`, routerCategoria);
+app.use(`/api/${API_VERSION}/docs`, ...swaggerDocs);
 
 // ✅ HEALTH CHECK (importante para Render)
 app.get("/", (req, res) => {

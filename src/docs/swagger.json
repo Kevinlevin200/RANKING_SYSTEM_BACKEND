@@ -1,0 +1,312 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Ranking System API",
+    "version": "1.0.0",
+    "description": "API académica para la gestión de usuarios, restaurantes, platos, reseñas, categorías y rankings. Permite autenticación JWT, calificación de restaurantes, y filtrado por categorías."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api/v1",
+      "description": "Servidor local de desarrollo"
+    },
+    {
+      "url": "https://ranking-system-backend.onrender.com/api/v1",
+      "description": "Servidor en producción (Render)"
+    }
+  ],
+  "tags": [
+    { "name": "Usuarios", "description": "Gestión de cuentas y autenticación" },
+    { "name": "Restaurantes", "description": "Registro y gestión de restaurantes" },
+    { "name": "Platos", "description": "Gestión de platos pertenecientes a restaurantes" },
+    { "name": "Reseñas", "description": "Opiniones, calificaciones y reacciones de usuarios" },
+    { "name": "Categorías", "description": "Administración de categorías de comida" },
+    { "name": "Ranking", "description": "Consulta de rankings generales o por categoría" }
+  ],
+  "paths": {
+    "/usuarios/registrar": {
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Registrar un nuevo usuario o administrador",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UsuarioInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuario registrado correctamente" },
+          "400": { "description": "Datos inválidos o faltantes" }
+        }
+      }
+    },
+    "/usuarios/login": {
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Iniciar sesión y obtener token JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Inicio de sesión exitoso, devuelve token JWT" },
+          "401": { "description": "Credenciales incorrectas" }
+        }
+      }
+    },
+    "/usuarios/verificar-sesion": {
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Verificar si el usuario tiene una sesión activa",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Sesión válida" },
+          "401": { "description": "Token inválido o expirado" }
+        }
+      }
+    },
+    "/usuarios/cambiar-contraseña": {
+      "patch": {
+        "tags": ["Usuarios"],
+        "summary": "Actualizar contraseña de usuario autenticado",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CambiarContraseñaInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Contraseña actualizada" },
+          "400": { "description": "Error en validación" }
+        }
+      }
+    },
+    "/restaurantes": {
+      "get": {
+        "tags": ["Restaurantes"],
+        "summary": "Listar todos los restaurantes",
+        "responses": {
+          "200": {
+            "description": "Lista de restaurantes obtenida correctamente"
+          }
+        }
+      }
+    },
+    "/restaurantes/{id}": {
+      "get": {
+        "tags": ["Restaurantes"],
+        "summary": "Obtener un restaurante por su ID",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Restaurante encontrado" }, "404": { "description": "No encontrado" } }
+      },
+      "patch": {
+        "tags": ["Restaurantes"],
+        "summary": "Modificar un restaurante existente",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RestauranteInput" } } }
+        },
+        "responses": { "200": { "description": "Restaurante actualizado" } }
+      },
+      "delete": {
+        "tags": ["Restaurantes"],
+        "summary": "Eliminar un restaurante por ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "204": { "description": "Eliminado correctamente" } }
+      }
+    },
+    "/platos": {
+      "get": {
+        "tags": ["Platos"],
+        "summary": "Listar todos los platos registrados",
+        "responses": { "200": { "description": "Lista de platos obtenida" } }
+      }
+    },
+    "/platos/restaurante/{restauranteId}": {
+      "get": {
+        "tags": ["Platos"],
+        "summary": "Listar platos por restaurante",
+        "parameters": [
+          { "name": "restauranteId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Lista de platos filtrados por restaurante" } }
+      }
+    },
+    "/platos/registrar": {
+      "post": {
+        "tags": ["Platos"],
+        "summary": "Registrar un nuevo plato",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PlatoInput" } } }
+        },
+        "responses": { "201": { "description": "Plato creado correctamente" } }
+      }
+    },
+    "/resena/registrar": {
+      "post": {
+        "tags": ["Reseñas"],
+        "summary": "Crear una nueva reseña de usuario",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReseñaInput" } } }
+        },
+        "responses": { "201": { "description": "Reseña creada" } }
+      }
+    },
+    "/resena/usuario/{usuarioId}": {
+      "get": {
+        "tags": ["Reseñas"],
+        "summary": "Listar reseñas creadas por un usuario",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "usuarioId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Reseñas del usuario obtenidas" } }
+      }
+    },
+    "/resena/{id}/like": {
+      "post": {
+        "tags": ["Reseñas"],
+        "summary": "Dar like a una reseña",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Like registrado" } }
+      }
+    },
+    "/resena/{id}/dislike": {
+      "post": {
+        "tags": ["Reseñas"],
+        "summary": "Dar dislike a una reseña",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Dislike registrado" } }
+      }
+    },
+    "/categoria": {
+      "get": {
+        "tags": ["Categorías"],
+        "summary": "Listar todas las categorías",
+        "responses": { "200": { "description": "Categorías obtenidas" } }
+      }
+    },
+    "/categoria/registrar": {
+      "post": {
+        "tags": ["Categorías"],
+        "summary": "Registrar una nueva categoría (solo admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoriaInput" } } }
+        },
+        "responses": { "201": { "description": "Categoría creada" } }
+      }
+    },
+    "/ranking/ranking": {
+      "get": {
+        "tags": ["Ranking"],
+        "summary": "Obtener el ranking general de restaurantes",
+        "responses": { "200": { "description": "Ranking obtenido" } }
+      }
+    },
+    "/ranking/categoria/{categoria}": {
+      "get": {
+        "tags": ["Ranking"],
+        "summary": "Obtener ranking por categoría",
+        "parameters": [{ "name": "categoria", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Ranking filtrado por categoría" } }
+      }
+    },
+    "/ranking/detalle/{id}": {
+      "get": {
+        "tags": ["Ranking"],
+        "summary": "Ver detalles completos de un restaurante en el ranking",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Detalle del restaurante obtenido" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UsuarioInput": {
+        "type": "object",
+        "required": ["email", "usuario", "contraseña"],
+        "properties": {
+          "email": { "type": "string", "example": "juan.perez@example.com" },
+          "usuario": { "type": "string", "example": "juanperez" },
+          "contraseña": { "type": "string", "example": "usuario123" },
+          "tipo": { "type": "string", "enum": ["usuario", "admin"], "example": "usuario" }
+        }
+      },
+      "LoginInput": {
+        "type": "object",
+        "required": ["email", "contraseña"],
+        "properties": {
+          "email": { "type": "string", "example": "juan.perez@example.com" },
+          "contraseña": { "type": "string", "example": "usuario123" }
+        }
+      },
+      "CambiarContraseñaInput": {
+        "type": "object",
+        "properties": {
+          "contraseñaActual": { "type": "string", "example": "usuario123" },
+          "nuevaContraseña": { "type": "string", "example": "usuario456" }
+        }
+      },
+      "RestauranteInput": {
+        "type": "object",
+        "required": ["nombre", "descripcion", "categoria", "ubicacion"],
+        "properties": {
+          "nombre": { "type": "string", "example": "Sushi Fusion Express" },
+          "descripcion": { "type": "string", "example": "Comida japonesa moderna con toques occidentales." },
+          "categoria": { "type": "string", "example": "Internacional" },
+          "ubicacion": { "type": "string", "example": "Avenida Libertadores #89-34, Barrancabermeja" },
+          "imagen": { "type": "string", "example": "https://example.com/sushi.jpg" },
+          "aprobado": { "type": "boolean", "example": true }
+        }
+      },
+      "PlatoInput": {
+        "type": "object",
+        "required": ["nombre", "descripcion", "categoria", "restauranteId"],
+        "properties": {
+          "nombre": { "type": "string", "example": "Roll de Salmón Tropical" },
+          "descripcion": { "type": "string", "example": "Salmón fresco, mango y aguacate con salsa de maracuyá." },
+          "categoria": { "type": "string", "example": "Internacional" },
+          "imagen": { "type": "string", "example": "https://example.com/salmon-roll.jpg" },
+          "restauranteId": { "type": "string", "example": "6563af128fd56e0012a9f3a4" }
+        }
+      },
+      "ReseñaInput": {
+        "type": "object",
+        "required": ["comentario", "calificacion", "restauranteId", "usuarioId"],
+        "properties": {
+          "comentario": { "type": "string", "example": "Excelente atención y comida deliciosa." },
+          "calificacion": { "type": "integer", "example": 5 },
+          "restauranteId": { "type": "string", "example": "6563af128fd56e0012a9f3a4" },
+          "usuarioId": { "type": "string", "example": "6563af9b28fd56e0012a9f39" }
+        }
+      },
+      "CategoriaInput": {
+        "type": "object",
+        "required": ["nombre"],
+        "properties": {
+          "nombre": { "type": "string", "example": "Gourmet" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
