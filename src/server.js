@@ -25,11 +25,15 @@ const limiter = rateLimit({
   message: { error: "Demasiadas peticiones desde esta IP, intenta más tarde." },
 });
 
-// ✅ CONFIGURACIÓN CORS PARA GITHUB PAGES Y LOCAL
+// ✅ CONFIGURACIÓN CORS MEJORADA PARA GITHUB PAGES
 const corsOptions = {
   origin: function (origin, callback) {
+    // Permitir peticiones sin origin (Postman, Thunder Client, Render health checks)
+    if (!origin) {
+      return callback(null, true);
+    }
+
     const allowedOrigins = [
-      "https://kevinlevin200.github.io", // ✅ GitHub Pages (sin barra final)
       "https://ranking-system-backend.onrender.com",
       "http://localhost:5500",
       "http://127.0.0.1:5500",
@@ -37,8 +41,10 @@ const corsOptions = {
       "http://127.0.0.1:4000"
     ];
 
-    // Permitir peticiones sin origin (Postman, Thunder Client, Render health checks)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // ✅ Verificar si el origin es de GitHub Pages (acepta cualquier ruta)
+    const isGitHubPages = origin.startsWith("https://kevinlevin200.github.io");
+    
+    if (allowedOrigins.includes(origin) || isGitHubPages) {
       callback(null, true);
     } else {
       console.warn(`⚠️ Origen bloqueado: ${origin}`);
@@ -118,7 +124,7 @@ ConnectDB()
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-      console.log(`🌍 API disponible en: /api/${API_VERSION}`);
+      console.log(`🌐 API disponible en: /api/${API_VERSION}`);
       console.log(`📡 CORS habilitado para GitHub Pages y localhost`);
     });
   })
