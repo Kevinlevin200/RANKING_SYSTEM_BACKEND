@@ -10,6 +10,7 @@ import routerResena from "./routes/reseña.routes.js";
 import routerPlatos from "./routes/platos.routes.js";
 import routerRanking from "./routes/ranking.routes.js";
 import routerCategoria from "./routes/categoria.routes.js";
+import routerNotificacion from "./routes/notificacion.routes.js";
 
 const app = express();
 
@@ -79,6 +80,7 @@ app.use(`/api/${API_VERSION}/resena`, routerResena);
 app.use(`/api/${API_VERSION}/ranking`, routerRanking);
 app.use(`/api/${API_VERSION}/categoria`, routerCategoria);
 app.use(`/api/${API_VERSION}/docs`, ...swaggerDocs);
+app.use(`/api/${API_VERSION}/notificaciones`, routerNotificacion);
 
 // ✅ HEALTH CHECK (importante para Render)
 app.get("/", (req, res) => {
